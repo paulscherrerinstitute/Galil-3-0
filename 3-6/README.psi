@@ -1,0 +1,12 @@
+The SL6 target must be built natively, cross-building
+from a RHEL7 machine using devtoolset-7 does not work
+because the devtoolset run-time libraries are not
+backwards compatible. I.e., a shared-library object
+built on RHEL7 for SL6 references symbols that are
+present in the RHEL7 run-time libraries but not in
+SL6's.
+
+Therefore, the GalilSup module must be built (and installed)
+natively from SL6 and/or RHEL7 machines.
+
+T.S., 5/2020.
