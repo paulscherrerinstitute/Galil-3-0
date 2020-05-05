@@ -1007,7 +1007,7 @@ void GalilController::setParamDefaults(void)
   //Set driver version
   setStringParam(GalilDriver_, driverVersion);
   //Pass address string provided by GalilCreateController to upper layers
-  setStringParam(GalilAddress_, address_);
+  setStringParam(GalilAddress_, address_.c_str());
   //Set default model string
   setStringParam(GalilModel_, "Unknown");
   //SSI capable
@@ -1084,7 +1084,7 @@ void GalilController::connected(void)
   //store model, and firmware version in GalilController instance
   model_ = tsp(resp_);
   //Pass model string to ParamList
-  setStringParam(GalilModel_, model_);
+  setStringParam(GalilModel_, model_.c_str());
   //Determine if controller is dmc or rio
   rio_ = (model_.find("RIO") != string::npos) ? true : false;
   //Give connect message
@@ -2391,14 +2391,14 @@ asynStatus GalilController::beginProfileMotion(int coordsys, char coordName)
       if (mesg.empty())
          mesg = "Profile start failed...";
       //Store message in ParamList
-      setStringParam(profileExecuteMessage_, mesg);
+      setStringParam(profileExecuteMessage_, mesg.c_str());
    }
    else {
       //Start success
       setIntegerParam(profileExecuteState_, PROFILE_EXECUTE_EXECUTING);
       mesg = "Profile executing...";
       //Store message in ParamList
-      setStringParam(profileExecuteMessage_, mesg);
+      setStringParam(profileExecuteMessage_, mesg.c_str());
    }
 
    //Post message
@@ -2589,7 +2589,7 @@ asynStatus GalilController::prepRunProfile(FILE **profFile, int *coordsys, char 
   //If any error, and mesg is not empty
   if (status && mesg.size() > 0) {
      //Set profile execute message
-     setStringParam(profileExecuteMessage_, mesg);
+     setStringParam(profileExecuteMessage_, mesg.c_str());
   }
 
   //Return result
@@ -2894,7 +2894,7 @@ asynStatus GalilController::runProfileFile()
 
   //Set profile execute mesg
   if (mesg.size() > 0)
-     setStringParam(profileExecuteMessage_, mesg);
+     setStringParam(profileExecuteMessage_, mesg.c_str());
 
   //Close the trajectory file
   if (profFile != NULL)
@@ -5753,6 +5753,10 @@ void GalilController::GalilAddCode(int section, string filename) {
             axis = thread_code_[found + 10];
             //Initial position within thread code to insert custom code
             inpos = found;
+         } else {
+            mesg = "GalilAddCode: 'JP #THREAD' not found in code";
+            setCtrlError(mesg);
+            return;
          }
       }
 
